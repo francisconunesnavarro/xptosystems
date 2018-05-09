@@ -63,14 +63,18 @@ public class EstadoResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-		String ufDecoded = URL.decodeParam(uf, "N");
-		Page<Cidade> list = cidadeService.findCidadesByUF(ufDecoded, page, linesPerPage, orderBy, direction);
-		Page<CidadeDTO> listDTO = list.map(obj -> new CidadeDTO(obj));
-		for (int i = 0; i < listDTO.getSize(); i++) {
-			listDTO.getContent().get(i).getEstado()
-					.setQtdCidades(cidadeService.findQtdCidadesByUf(listDTO.getContent().get(i).getEstado().getUf()));
+		if( !uf.isEmpty() ) {
+			String ufDecoded = URL.decodeParam(uf, "N");
+			Page<Cidade> list = cidadeService.findCidadesByUF(ufDecoded, page, linesPerPage, orderBy, direction);
+			Page<CidadeDTO> listDTO = list.map(obj -> new CidadeDTO(obj));
+			for (int i = 0; i < listDTO.getSize(); i++) {
+				listDTO.getContent().get(i).getEstado()
+						.setQtdCidades(cidadeService.findQtdCidadesByUf(listDTO.getContent().get(i).getEstado().getUf()));
+			}
+			return ResponseEntity.ok().body(listDTO);
 		}
-		return ResponseEntity.ok().body(listDTO);
+		else {
+			return null;
+		}
 	}
-
 }

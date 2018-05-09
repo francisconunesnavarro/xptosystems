@@ -109,10 +109,6 @@ public class CidadeResource {
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 		Page<Cidade> list = service.findByIbge(ibgeId, page, linesPerPage, orderBy, direction);
 		Page<CidadeDTO> listDTO = list.map(obj -> new CidadeDTO(obj));
-		for (int i = 0; i < listDTO.getSize(); i++) {
-			listDTO.getContent().get(i).getEstado()
-					.setQtdCidades(service.findQtdCidadesByUf(listDTO.getContent().get(i).getEstado().getUf()));
-		}
 		return ResponseEntity.ok().body(listDTO);
 	}
 
